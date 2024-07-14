@@ -26,7 +26,7 @@ O projeto consiste em vários scripts Python:
 1. **Instale as Bibliotecas Necessárias:**
    ```bash
    pip install requests time re os pandas beautifulsoup4 selenium send_email
-
+#
 2. **Configure as credenciais:**
  - Senha de Aplicativo: A segurança é fundamental! Em vez de usar sua senha normal do Gmail, você deve gerar uma "Senha de Aplicativo" específica para este projeto. Veja como:
  - Acesse sua conta do Google: https://myaccount.google.com/
@@ -36,12 +36,38 @@ O projeto consiste em vários scripts Python:
  - Dê um nome descritivo à senha (por exemplo, "Raspagem de Notebooks") e clique em "Criar".
  - Copie a senha gerada (é uma senha única e temporária) e guarde-a em um local seguro. Não compartilhe essa senha com ninguém!
  - Preencha o arquivo config_email.py:
-    - EMAIL = "seu_email@gmail.com"  -> Substitua pelo seu email
+    - EMAIL = "seu.email@gmail.com"  -> Substitua pelo seu email
     - PASSWORD = "sua_senha_de_aplicacao"  -> Substitua pela senha de aplicativo gerada
     - SMTP_SERVER = "smtp.gmail.com"  -> Substitua pelo servidor de email desejado e a porta do servidor
     - SMTP_PORT = 587
+#
+3. **Personalização:**
+- Este arquivo contém o modelo de email e as configurações para personalizar o email.
+    - **`email_subject`** : Assunto do email.
+    - **`email_html_message`**: Mensagem no formato HTML.
+    - **`recipient_email`**: Destinatário da mensagem.
+    - **`excel_file_path`**: Busca pleo proprio arquivo gerado pelo script na pasta Output.
 
-3. **Execute o Script**:
+   ```python
+   import os
+
+   email_subject = "Notebook Report"
+   email_html_message = """
+        <!DOCTYPE html>
+        <html>
+        <body>
+            <p>Hello, here is your report of notebooks extracted from Magazine Luiza.</p>
+            <p>Best regards,</p>
+            <p>Robot🤖.</p>
+        </body>
+        </html>
+        """
+   recipient_email = "seu.email@gmail.com"
+
+   excel_file_path = os.path.abspath(os.path.join('Output', 'Notebooks.xlsx'))
+   ```
+#
+4. **Execute o Script**:
    ```bash
     python main.py
    
@@ -56,4 +82,4 @@ O projeto consiste em vários scripts Python:
 
 *O script depende da estrutura do site e dos nomes das classes. Se o site mudar, o script pode precisar ser ajustado.*
 ## Contribuindo
-Contribuições são bem-vindas! Se você encontrar algum problema ou tiver sugestões de melhoria, sinta-se à vontade para abrir um problema ou enviar uma solicitação de pull.
+Contribuições são bem-vindas! 
