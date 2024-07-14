@@ -15,12 +15,13 @@ Este projeto faz a raspagem de dados do site da Magazine Luiza para coletar info
 - **`time:`** Para pausar a execução e gerenciar intervalos de tempo.
 
 ## Estrutura do Projeto
-
-O projeto consiste em vários scripts Python:
-
-- **`main.py`:** O script principal que orquestra todo o processo.
-- **`send_email.py`:** Contém a função responsavél pelo envio de email
-
+O projeto está organizado da seguinte forma:
+- main.py: O script principal que orquestra todo o processo.
+- send_email.py: Contém a função para enviar o relatório por email.
+- configs:
+   - config_email.py: Contém as configurações de e-mail para enviar o relatório.
+   - configs_template_email.py: Contém o modelo de email e configurações básicas para enviar o relatório.
+   - config_scraping.py: Contém as configurações do processo de scraping, como URL do site, diretório de saída, etc.
 ## Como Usar
 
 1. **Instale as Bibliotecas Necessárias:**
@@ -42,7 +43,7 @@ O projeto consiste em vários scripts Python:
     - SMTP_PORT = 587
 #
 3. **Personalização:**
-- Este arquivo contém o modelo de email e as configurações para personalizar o email.
+-   Para personalizar o email, edite o arquivo configs_template_email.py dentro da pasta configs. Este arquivo contém o modelo do email e você pode modificar as seguintes variáveis:
     - **`email_subject`** : Assunto do email.
     - **`email_html_message`**: Mensagem no formato HTML.
     - **`recipient_email`**: Destinatário da mensagem.
