@@ -6,40 +6,41 @@ from selenium.webdriver.firefox.options import Options
 import time
 import re
 import os
-from send_email import enviar_email
+import send_email
 
-# Configuração do Selenium
+# Set up Selenium 
 options = Options()
 options.headless = True
 driver = webdriver.Firefox(options=options)
 
-# Constantes
+# Configuration
 DOMAIN = "https://www.magazineluiza.com.br"
 URL = f"{DOMAIN}/busca/notebooks/?from=clickSuggestion&filters=entity---notebook"
 OUTPUT_DIR = 'Output'
 ATTEMPTS = 3
 
-def verificar_conexao(url, attempts=3):
-    """Verifica a conexão com o site, realizando até 3 tentativas."""
+def check_connection(url, attempts=3):
+    """Checks if the website is accessible, making up to 3 attempts."""
     for attempt in range(attempts):
         try:
             response = requests.get(url, timeout=5)
-            response.raise_for_status()  # Lança exceção se houver erro HTTP
-            print(f"Conexão estabelecida com sucesso na tentativa {attempt+1}.")
-            return True  # Conexão bem-sucedida
+            response.raise_for_status()  # Raises exception if there's an HTTP error
+            print(f"Connection successful on attempt {attempt + 1}.")
+            return True
         except requests.exceptions.RequestException as e:
-            print(f"Tentativa {attempt+1} de conexão falhou: {e}")
+            print(f"Attempt {attempt + 1} failed: {e}")
             time.sleep(3)
         except Exception as e:
-            print(f"Erro desconhecido: {e}")
+            print(f"Unknown error: {e}")
             time.sleep(3)
 
-    print(f"O site '{url}' parece estar fora do ar.")
-    return False  # Todas as tentativas falharam
+    print(f"The website '{url}' appears to be down.")
+    return False
 
-def obter_dados_dos_produtos(driver, url):
-    """Coleta os dados dos produtos de uma página."""
+def get_product_data(driver, url):
+    """Scrapes product data from a single page."""
     driver.get(url)
+    time.sleep(2)  # Add a delay to allow the page to fully load 
     page_content = driver.page_source
     soup = BeautifulSoup(page_content, 'html.parser')
     items = soup.find_all('li', class_="sc-fTyFcS iTkWie")
@@ -63,36 +64,36 @@ def obter_dados_dos_produtos(driver, url):
                 })
     return products
 
-def processar_dados(products):
-    """Processa os dados dos produtos e separa em "Melhores" e "Piores"."""
-    df = pd.DataFrame(products) # DataFrame
-    melhores = df[df['QTD_AVAL'] >= 100]
-    piores = df[df['QTD_AVAL'] < 100]
-    return melhores, piores
+def process_data(products):
+    """Processes product data and categorizes into 'Best' and 'Worst'."""
+    df = pd.DataFrame(products)
+    best = df[df['QTD_AVAL'] >= 100]
+    worst = df[df['QTD_AVAL'] < 100]
+    return best, worst
 
-def salvar_dados_excel(melhores, piores, output_dir):
-    """Salva os dados em um arquivo Excel."""
+def save_data_to_excel(best, worst, output_dir):
+    """Saves data to an Excel file."""
     os.makedirs(output_dir, exist_ok=True)
     with pd.ExcelWriter(os.path.join(output_dir, 'Notebooks.xlsx'), engine='xlsxwriter') as writer:
-        melhores.to_excel(writer, sheet_name='Melhores', index=False)
-        piores.to_excel(writer, sheet_name='Piores', index=False)
-    print("Arquivo Excel 'Notebooks.xlsx' criado com sucesso em 'Output'.")
+        best.to_excel(writer, sheet_name='Melhores', index=False)
+        worst.to_excel(writer, sheet_name='Piores', index=False)
+    print("Excel file 'Notebooks.xlsx' created successfully in 'Output'.")
 
+    
 
-if verificar_conexao(URL):
+if check_connection(URL):
     products = []
     for page_number in range(1, 3):
         url = f"{URL}&page={page_number}"
-        products.extend(obter_dados_dos_produtos(driver, url))
+        products.extend(get_product_data(driver, url))
 
-    melhores, piores = processar_dados(products)
-    salvar_dados_excel(melhores, piores, OUTPUT_DIR)
+    best, worst = process_data(products)
+    save_data_to_excel(best, worst, OUTPUT_DIR)
 
     driver.quit()
 
-    # enviando email
-    assunto_email = "Relatório Notebooks"
-    mensagem_html = """
+    subject_email = "Relatório Notebooks"
+    content_html = """
     <!DOCTYPE html>
     <html>
     <body>
@@ -103,13 +104,10 @@ if verificar_conexao(URL):
     </html>
     """
     to_send = "rosaa.estefanii@gmail.com"
-    arquivo_excel = os.path.abspath(os.path.join(OUTPUT_DIR, 'Notebooks.xlsx'))
+    excel_file = os.path.abspath(os.path.join(OUTPUT_DIR, 'Notebooks.xlsx'))
 
-    enviar_email(assunto_email,
-                mensagem_html ,
-                to_send, 
-                arquivo_excel)
+    send_email(subject_email, content_html, to_send, excel_file)
 
 else:
-    print("O site está fora do ar. Encerrando a execução.")
+    print("Website is down.")
     driver.quit()
