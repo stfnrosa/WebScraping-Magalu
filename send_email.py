@@ -23,7 +23,6 @@ def send_email(recipient_email, subject, body, attachment_file=None):
             part.add_header('Content-Disposition', f'attachment; filename="{attachment_file}"')
             msg.attach(part)
 
-    # Configurações SMTP
     server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)  
     server.starttls()
     server.login(EMAIL, PASSWORD)  

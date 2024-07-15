@@ -1,13 +1,13 @@
 import os
 
-email_subject = "Notebook Report"
+email_subject = "Relatório Notebooks"
 email_html_message = """
         <!DOCTYPE html>
         <html>
         <body>
-            <p>Hello, here is your report of notebooks extracted from Magazine Luiza.</p>
-            <p>Best regards,</p>
-            <p>Robot🤖.</p>
+            <p>Olá, aqui está o seu relatório dos notebooks extraídos da Magazine Luiza</p>
+            <p>Atenciosamente,</p>
+            <p>Robô🤖.</p>
         </body>
         </html>
         """

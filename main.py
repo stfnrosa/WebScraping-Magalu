@@ -1,35 +1,43 @@
-import requests
-import time
-import re
+from bs4 import BeautifulSoup
+import logging
 import os
 import pandas as pd
-from bs4 import BeautifulSoup
+import re
+import requests
+import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from send_email import send_email
 from configs.configs_template_email import email_html_message, email_subject, recipient_email, excel_file_path
-from configs.configs_spraping import DOMAIN, URL, OUTPUT_DIR, ATTEMPTS
+from configs.configs_scraping import DOMAIN, URL
 
 # Selenium configuration
 options = webdriver.FirefoxOptions()
 driver = webdriver.Firefox(options=options)
 
+# Configurar o logging
+logging.basicConfig(filename='connection_log.txt', level=logging.INFO, 
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 def check_connection(url, attempts=3):
     for attempt in range(attempts):
         try:
             response = requests.get(url, timeout=5)
             response.raise_for_status()
+            logging.info(f"Connection successful on attempt {attempt + 1}.")
             print(f"Connection successful on attempt {attempt + 1}.")
             return True
         except requests.exceptions.RequestException as e:
+            logging.error(f"Connection attempt {attempt + 1} failed: {e}")
             print(f"Connection attempt {attempt + 1} failed: {e}")
             time.sleep(3)
         except Exception as e:
+            logging.error(f"Unknown error: {e}")
             print(f"Unknown error: {e}")
             time.sleep(3)
+    logging.error(f"The site '{url}' appears to be down.")
     print(f"The site '{url}' appears to be down.")
     return False
 
