@@ -12,6 +12,7 @@ Este projeto faz a raspagem de dados do site da Magazine Luiza para coletar info
 - **`re:`** Para expressões regulares, utilizadas para extrair dados do texto.
 - **`requests:`** Para fazer requisições HTTP para buscar páginas da web.
 - **`selenium:`** Para controlar um navegador da web e interagir com conteúdo dinâmico.
+- **`smtplib:`** Define um objeto de sessão de cliente SMTP que pode ser usado para enviar e-mail
 - **`time:`** Para pausar a execução e gerenciar intervalos de tempo.
 
 ## Estrutura do Projeto
